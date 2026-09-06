@@ -1,0 +1,28 @@
+# Credentials: never commit real .env files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python / IDE
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.idea/
+.vscode/
+.pytest_cache/
+
+# Frontend
+node_modules/
+dist/
+
+# Local data / logs
+volumes/
+uploads/
+*.db
+*.log
+*.zip
+.DS_Store
