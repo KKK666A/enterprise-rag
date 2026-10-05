@@ -218,6 +218,20 @@ npm.cmd run dev
 | POST /api/documents | multipart/form-data，字段 file | filename、chunks、total_chunks、message |
 | POST /api/query | JSON：{"question":"年假如何申请？"} | question、answer:null、sources |
 
+也可以绕过前端，在仓库根目录用 PowerShell 直接验证 API（先确保后端已经在 8000 端口启动）：
+
+```powershell
+curl.exe -X POST http://127.0.0.1:8000/api/documents `
+  -F "file=@backend/data.txt;type=text/plain"
+
+Invoke-RestMethod -Method Post `
+  -Uri http://127.0.0.1:8000/api/query `
+  -ContentType 'application/json; charset=utf-8' `
+  -Body '{"question":"年假需要提前多久申请？"}'
+```
+
+这里显式使用 `curl.exe`，避免 Windows PowerShell 将 `curl` 解析为 `Invoke-WebRequest` 别名。重复上传同一文件名会按当前接口约定返回 409；如需反复试验查询，只执行第二条命令即可。
+
 上传仅支持 UTF-8 TXT，最大 200KB、200 个文本块；同名文档返回 409，不支持覆盖。问题最多 200 字符。后端返回融合后的多条 sources，前端只显示 sources[0]。失败不自动重试：若写入中途失败，应先检查数据库是否已有部分数据。
 
 **勿对已有数据直接运行旧版 `milvus_demo.py`**：它从 ID=1 开始 upsert，可能覆盖相同 ID。该脚本仅作为学习材料保留；正常流程用 `init_collection.py` + 网页上传。
